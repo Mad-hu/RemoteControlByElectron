@@ -1,39 +1,27 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './Home.css';
+import { BaseButton } from '../../components/home/base-button';
+import { MainCenter } from '../../components/home/main-center';
+import AgoraRTCService from '../../services/agora/agora-rtc.service';
+import AgoraRTMService from '../../services/agora/agora-rtm.service';
+import './Home.scss';
+export default class Home extends React.Component {
 
-const Home = () => {
-  return (
-    <div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
+  constructor(
+    props: any,
+    private agoraRTCService: AgoraRTCService,
+    private agoraRTMService: AgoraRTMService
+  ) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={'home'}>
+        <MainCenter>
+          <BaseButton></BaseButton>
+        </MainCenter>
+
       </div>
-    </div>
-  );
-};
-
-export default Home;
+    );
+  }
+}

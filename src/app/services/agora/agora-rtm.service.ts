@@ -1,6 +1,29 @@
-import AgoraRTM, { RtmChannel, RtmClient } from 'agora-rtm-sdk';
-
-export default class AgoraRTMService {
+import AgoraRTM, { RtmChannel, RtmClient, RtmEvents, RtmTextMessage } from 'agora-rtm-sdk';
+import { EventEmitter } from 'events';
+import { RtmTextMessageCategory } from '../../interface/agora-rtm';
+export const rtmTextMessageCategory: RtmTextMessageCategory = {
+  /* start shanre screen */
+  START_SHARE_SCREEN: 'START_SHARE_SCREEN',
+  /* stop share screen */
+  STOP_SHARE_SCREEN: 'STOP_SHARE_SCREEN',
+  /* mouse move */
+  MOUSE_MOVE: 'MOUSE_MOVE',
+  /* mouse click */
+  MOUSE_CLICK: 'MOUSE_CLICK',
+  /* mouse double click */
+  MOUSE_DOUBLE_CLICK: 'MOUSE_DOUBLE_CLICK',
+  /* keyboard down */
+  KEYBOARD_DOWN: 'KEYBOARD_DOWN',
+  /* leave channel */
+  LEAVE_CHANNEL: 'LEAVE_CHANNEL',
+  /* join channel */
+  JOIN_CHANNEL: 'JOIN_CHANNEL',
+  /* member count update channel */
+  MEMBER_COUNT_UPDATE_CHANNEL: 'MEMBER_COUNT_UPDATE_CHANNEL',
+  /* attributesUpdated */
+  ATTRIBUTES_UPDATED: 'ATTRIBUTES_UPDATED'
+}
+export default class AgoraRTMService extends EventEmitter {
 
   /**
    * RTM 初始化后的对象
@@ -37,10 +60,10 @@ export default class AgoraRTMService {
    * @memberof AgoraRTMService
    */
   createChannel(channel: string) {
-    if(!this.rtmClient) {
+    if (!this.rtmClient) {
       throw new Error('not find rtmClient! first please init rtm sdk!');
     };
-    if(typeof(channel) != 'string') {
+    if (typeof (channel) != 'string') {
       throw new Error('channel is not string!');
     }
     this.chan = this.rtmClient.createChannel(channel);
@@ -53,13 +76,55 @@ export default class AgoraRTMService {
    * @memberof AgoraRTMService
    */
   joinChannel() {
-    if(!this.chan) {
+    if (!this.chan) {
       throw new Error('not find chan! first please create channel!');
     };
+    /* 频道监听 */
+    this.messageEvent();
     return this.chan.join();
   }
 
+  /**
+   * 离开频道
+   *
+   * @memberof AgoraRTMService
+   */
+  leaveChannel() {
+    this.chan.leave();
+  }
+
   sendMessage(msg: any) {
-    return this.chan.sendMessage({ text: msg});
+    return this.chan.sendMessage({ text: msg });
+  }
+
+  messageEvent() {
+    const channelMessage: keyof RtmEvents.RtmChannelEvents = 'ChannelMessage';
+    const attributesUpdated: keyof RtmEvents.RtmChannelEvents = 'AttributesUpdated';
+    const memberCountUpdated: keyof RtmEvents.RtmChannelEvents = 'MemberCountUpdated';
+    const memberJoined: keyof RtmEvents.RtmChannelEvents = 'MemberJoined';
+    const memberLeft: keyof RtmEvents.RtmChannelEvents = 'MemberLeft';
+
+    this.chan.on(channelMessage, (message, memberId, messagePros) => {
+      console.log('channelMessage:' ,message, memberId, messagePros)
+      const jsonData = JSON.parse((<RtmTextMessage>message).text);
+      const command: keyof RtmTextMessageCategory = jsonData.command;
+      this.emit(command, jsonData);
+    });
+    this.chan.on(attributesUpdated, (attributes) => {
+      console.log('attributesUpdated:', attributes);
+      this.emit(rtmTextMessageCategory.MEMBER_COUNT_UPDATE_CHANNEL, attributes);
+    });
+    this.chan.on(memberCountUpdated, (attributes) => {
+      console.log('memberCountUpdated:', attributes);
+      this.emit(rtmTextMessageCategory.MEMBER_COUNT_UPDATE_CHANNEL, attributes);
+    });
+    this.chan.on(memberJoined, (attributes) => {
+      console.log('memberJoined:', attributes);
+      this.emit(rtmTextMessageCategory.JOIN_CHANNEL, attributes);
+    });
+    this.chan.on(memberLeft, (attributes) => {
+      console.log('memberLeft:', attributes);
+      this.emit(rtmTextMessageCategory.LEAVE_CHANNEL, attributes);
+    });
   }
 }

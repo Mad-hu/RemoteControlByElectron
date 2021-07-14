@@ -3,6 +3,9 @@
 </p>
 <br>
 
+## In Development
+ 
+项目还在开发中..内部测试项目已经完事了，核心功能都可以用，等我搬过来
 ## Install
 First, clone the repo via git and install dependencies:
 

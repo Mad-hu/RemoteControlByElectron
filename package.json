@@ -251,6 +251,7 @@
     "agora-rtc-sdk": "^3.6.1",
     "agora-rtm-sdk": "^1.4.3",
     "antd": "^4.16.7",
+    "classnames": "^2.3.1",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
@@ -258,7 +259,9 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "recoil": "^0.3.1",
     "regenerator-runtime": "^0.13.5",
+    "rxjs": "^7.2.0",
     "source-map-support": "^0.5.19"
   },
   "devEngines": {
