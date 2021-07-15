@@ -13,8 +13,7 @@ First, clone the repo via git and install dependencies:
 git clone ******
 cd your-project-name
 yarn
-cd src
-npm install @codeporter/robotjs --build-from-source --runtime=electron --target_arch=ia32 --target=11.4.9 --dist-url=https://electronjs.org/headers
+node-gyp rebuild --msvs_version=2019 --target=11.4.9 --arch=ia32 --dist-url=https://electronjs.org/headers
 ```
 
 ## Starting Development

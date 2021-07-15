@@ -22,6 +22,7 @@ export const rtcMessageCategory: RtcMessageCategory = {
   PEER_LEAVE: 'peer-leave',
 }
 export default class AgoraRTCService extends EventEmitter {
+  static remoteStream: AgoraRTC.Stream;
   rtcClient!: AgoraRTC.Client;
 
   init(appId: string, clientConfig: ClientConfig = { mode: 'live', codec: 'h264' }) {
@@ -80,6 +81,9 @@ export default class AgoraRTCService extends EventEmitter {
       });
       observer.complete();
     });
+  }
+  unsubscribe(stream: AgoraRTC.Stream) {
+    this.rtcClient.unsubscribe(stream);
   }
   publish(stream: AgoraRTC.Stream) {
     this.rtcClient.publish(stream, (err) => {

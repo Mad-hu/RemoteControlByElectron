@@ -1,17 +1,204 @@
-.home {
-  .main-center {
-    width: 500px;
-    height: 450px;
-    z-index: 1;
-    &::after {
-      content: '';
+.wrapper {
+  .checks {
+    display: flex;
+    margin-top: 10px;
+
+    .check {
+      margin-right: 10px;
+    }
+  }
+
+  .cancle-control {
+    padding: 5px 10px;
+    background-color: forestgreen;
+    position: absolute;
+    border-radius: 0 0 5px 5px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    right: 0;
+    top: 3.346vw;
+  }
+
+  .sharebox {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: -2;
+  }
+
+  .board {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    height: 93.50vh;
+    margin-top: 3.436vw;
+  }
+
+  .msg {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 20px;
+    justify-content: space-between;
+    width: 300px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .msg-server {
+    display: flex;
+    align-items: center;
+  }
+
+  .open-error {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: red;
+    margin-right: 5px;
+  }
+
+  .open-success {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: greenyellow;
+    margin-right: 5px;
+  }
+
+  .mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    background: rgba(216, 216, 216, .3);
+  }
+
+  .mainbox {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .main {
+    width: 50rem;
+    height: 24rem;
+    background: rgb(242, 249, 253);
+    border-radius: 1.1rem;
+    display: flex;
+    position: relative;
+
+    .bubble-1 {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(255,255,255,0.8);
-      z-index: -1;
+      z-index: 11;
+      top: 16.5rem;
+      left: -1.5rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .bubble-2 {
+      position: absolute;
+      z-index: 11;
+      left: 15rem;
+      bottom: -2.125rem;
+      width: 4rem;
+      height: 4.25rem;
+    }
+
+    .btn {
+      width: 200px;
+      height: 50px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.3rem;
+      box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12), 0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+      transition: transform ease-in 0.1s;
+      cursor: pointer;
+      background-color: #dd5789;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .input-t {
+      width: 300px;
+      height: 45px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border: 1px solid #dd5789;
+      font-size: 27px;
+      font-weight: bold;
+      padding: 5px;
+    }
+
+    input::-webkit-input-placeholder {
+      font-size: 27px;
+      color: #999;
+    }
+  }
+
+  .content {
+    width: 50%;
+    border-top-left-radius: 1.1rem;
+    border-bottom-left-radius: 1.1rem;
+    padding: 30px 60px;
+
+    header {
+      margin-bottom: 2rem;
+      position: relative;
+
+    }
+  }
+
+
+  .illustration {
+    border-top-right-radius: 1.1rem;
+    border-bottom-right-radius: 1.1rem;
+    width: 50%;
+    background: url('./assets/images/home.png') no-repeat center;
+    background-size: contain;
+
+    .devicemsg {
+      font-size: 12px;
+      color: #333;
+      line-height: 18px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-weight: bold;
+    }
+  }
+
+  #joinBtn {
+    background-color: #FF4D89;
+    border-radius: 1.1rem;
+    padding: .5rem 3rem;
+    box-sizing: border-box;
+    height: auto;
+    border-color: transparent;
+    transition: all .1s ease-in;
+
+    &:hover {
+      border-color: #B5BEC8;
+      box-shadow: 0 0 1px 1px #B5BEC8;
+      background-color: lighten($color: #FF4D89, $amount: 3)
     }
   }
 }

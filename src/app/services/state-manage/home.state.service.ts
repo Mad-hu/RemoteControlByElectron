@@ -4,3 +4,31 @@ export const connectionState = atom({
     key: 'connectionState',
     default: '未连接',
 });
+
+export const loadingState = atom({
+  key: 'loadingState',
+  default: false,
+});
+
+export const remoteCodeState = atom({
+  key: 'remoteCodeState',
+  default: '',
+});
+
+export const localCodeState  = atom({
+  key: 'localCodeState',
+  default: '',
+});
+
+export const openState  = atom({
+  key: 'openState',
+  default: false,
+});
+export const openMsgState = atom({
+  key: 'openMsgState',
+  default: '正在初始化应用',
+});
+export const controlTextState  = atom({
+  key: 'controlTextState',
+  default: '未控制',
+});
