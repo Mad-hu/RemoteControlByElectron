@@ -262,7 +262,8 @@
     "recoil": "^0.3.1",
     "regenerator-runtime": "^0.13.5",
     "rxjs": "^7.2.0",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "vkey": "^1.0.1"
   },
   "devEngines": {
     "node": ">=10.x",

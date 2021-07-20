@@ -11,8 +11,8 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
-
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { handleKey, handleMouse } from './node/robot/robotjs';
 let mainWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -26,7 +26,6 @@ if (
 ) {
   require('electron-debug')();
 }
-
 const createWindow = async () => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -71,6 +70,13 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
+  ipcMain.on('robot', (e, type, data) => {
+    if (type === 'mouse') {
+        handleMouse(data);
+    } else if (type === 'key') {
+        handleKey(data);
+    }
+})
 };
 
 /**

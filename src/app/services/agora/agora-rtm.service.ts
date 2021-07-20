@@ -41,6 +41,7 @@ export default class AgoraRTMService extends EventEmitter {
    * @memberof AgoraRTMService
    */
   init(appid: string) {
+    EventEmitter.defaultMaxListeners = 20;
     this.rtmClient = AgoraRTM.createInstance(appid);
   }
   /**
@@ -90,14 +91,16 @@ export default class AgoraRTMService extends EventEmitter {
    * @memberof AgoraRTMService
    */
   leaveChannel() {
-    this.chan.leave();
+    this.chan && this.chan.leave();
   }
 
   sendMessage(msg: any) {
+    console.log('sendMessage:', { text: msg });
     return this.chan.sendMessage({ text: msg });
   }
 
   messageEvent() {
+    console.log('messageEvent init!');
     const channelMessage: keyof RtmEvents.RtmChannelEvents = 'ChannelMessage';
     const attributesUpdated: keyof RtmEvents.RtmChannelEvents = 'AttributesUpdated';
     const memberCountUpdated: keyof RtmEvents.RtmChannelEvents = 'MemberCountUpdated';
@@ -112,7 +115,7 @@ export default class AgoraRTMService extends EventEmitter {
     });
     this.chan.on(attributesUpdated, (attributes) => {
       console.log('attributesUpdated:', attributes);
-      this.emit(rtmTextMessageCategory.MEMBER_COUNT_UPDATE_CHANNEL, attributes);
+      this.emit(rtmTextMessageCategory.ATTRIBUTES_UPDATED, attributes);
     });
     this.chan.on(memberCountUpdated, (attributes) => {
       console.log('memberCountUpdated:', attributes);

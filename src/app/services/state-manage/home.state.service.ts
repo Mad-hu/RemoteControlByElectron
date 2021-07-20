@@ -15,11 +15,6 @@ export const remoteCodeState = atom({
   default: '',
 });
 
-export const localCodeState  = atom({
-  key: 'localCodeState',
-  default: '',
-});
-
 export const openState  = atom({
   key: 'openState',
   default: false,
@@ -30,5 +25,10 @@ export const openMsgState = atom({
 });
 export const controlTextState  = atom({
   key: 'controlTextState',
-  default: '未控制',
+  default: '未连接',
+});
+
+export const controlShowViewState  = atom({
+  key: 'controlShowViewState',
+  default: false,
 });

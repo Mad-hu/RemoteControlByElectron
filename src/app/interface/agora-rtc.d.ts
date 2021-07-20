@@ -1,5 +1,9 @@
 export interface RtcMessageCategory {
   /**
+   * stream-published
+   */
+  STREAM_PUBLISHED: string;
+  /**
    * stream-added
    */
   STREAM_ADD: string,

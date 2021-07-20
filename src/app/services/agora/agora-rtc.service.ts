@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 import { RtcMessageCategory } from '../../interface/agora-rtc';
 
 export const rtcMessageCategory: RtcMessageCategory = {
+  /**
+   * stream-published
+   */
+  STREAM_PUBLISHED: 'stream-published',
   /*
    * stream-added
    */
@@ -26,10 +30,12 @@ export default class AgoraRTCService extends EventEmitter {
   rtcClient!: AgoraRTC.Client;
 
   init(appId: string, clientConfig: ClientConfig = { mode: 'live', codec: 'h264' }) {
+    EventEmitter.defaultMaxListeners = 5;
     this.rtcClient = AgoraRTC.createClient(clientConfig);
     return new Observable(observer => {
       this.rtcClient.init(appId, ()=> {
-        observer.next()
+        this.eventListen();
+        observer.next();
         observer.complete();
       }, (err)=> {
         observer.error(err);
@@ -74,6 +80,7 @@ export default class AgoraRTCService extends EventEmitter {
    * @memberof AgoraRTCService
    */
   subscribe(stream: AgoraRTC.Stream, options: { video: boolean, audio: boolean }) {
+    AgoraRTCService.remoteStream = stream;
     return new Observable(observer => {
       this.rtcClient.subscribe(stream, options, (err: string) => {
         observer.error(err);
@@ -83,6 +90,10 @@ export default class AgoraRTCService extends EventEmitter {
     });
   }
   unsubscribe(stream: AgoraRTC.Stream) {
+    if(!stream) {
+      throw new Error('stream is ' + stream);
+    }
+    stream.stop();
     this.rtcClient.unsubscribe(stream);
   }
   publish(stream: AgoraRTC.Stream) {
@@ -91,6 +102,9 @@ export default class AgoraRTCService extends EventEmitter {
     });
   }
   unpublish(stream: AgoraRTC.Stream) {
+    if(!stream) {
+      return;
+    }
     this.rtcClient.unpublish(stream, (err) => {
       console.log('Unpublish local stream failed' + err);
     });
@@ -104,6 +118,9 @@ export default class AgoraRTCService extends EventEmitter {
       }
     });
 
+    this.rtcClient.on('stream-published', (evt: any) => {
+      this.emit(rtcMessageCategory.STREAM_PUBLISHED, evt);
+    });
     this.rtcClient.on('stream-added', (evt: { stream: any; }) => {
       const stream = evt.stream;
       this.emit(rtcMessageCategory.STREAM_ADD, stream);
