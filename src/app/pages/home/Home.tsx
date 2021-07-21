@@ -31,10 +31,10 @@ export default class Home extends React.Component {
     const channel = this.homeService.getChannel();
     try {
       await lastValueFrom(this.agoraRTCService.init(appid));
-      await lastValueFrom(this.agoraRTCService.join(channel, this.localCode));
+      await lastValueFrom(this.agoraRTCService.join(channel, `${this.localCode}`));
 
       this.agoraRTMService.init(appid);
-      await this.agoraRTMService.login(this.localCode + '');
+      await this.agoraRTMService.login(`${this.localCode}`);
       this.agoraRTMService.createChannel(channel);
       this.agoraRTMService.joinChannel();
     } catch (error) {

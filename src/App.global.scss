@@ -5,7 +5,7 @@
 @import '../node_modules/antd/dist/antd.css';
 @import './app/pages/home/Home.scss';
 @import './app/components/title/title-bar.scss';
-
+@import './app/components/logout/logout.scss';
 @font-face {
   font-family: 'iconfont';
   src: url('./iconfont/iconfont.woff2?t=1626839231843') format('woff2'),
@@ -64,4 +64,12 @@ a {
 a:hover {
   opacity: 1;
   text-decoration: none;
+}
+/* 修复antd Modal弹窗偏移问题 */
+#root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

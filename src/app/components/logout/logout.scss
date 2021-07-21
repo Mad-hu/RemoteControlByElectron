@@ -1,0 +1,33 @@
+.logout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  .logout-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .logout-btns {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    .logout-btn {
+      width: 60px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+      font-size: 16px;
+      background-color: #eee;
+      margin: 0 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      &:hover {
+        border: 1px solid #333
+      }
+    }
+  }
+}
