@@ -29,7 +29,7 @@ export default class AgoraRTCService extends EventEmitter {
   static remoteStream: AgoraRTC.Stream;
   rtcClient!: AgoraRTC.Client;
 
-  init(appId: string, clientConfig: ClientConfig = { mode: 'live', codec: 'h264' }) {
+  init(appId: string, clientConfig: ClientConfig = { mode: 'live', codec: 'vp8' }) {
     EventEmitter.defaultMaxListeners = 5;
     this.rtcClient = AgoraRTC.createClient(clientConfig);
     return new Observable(observer => {

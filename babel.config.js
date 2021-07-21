@@ -27,6 +27,7 @@ module.exports = (api) => {
     ],
     plugins: [
       // Stage 0
+      [require("@babel/plugin-proposal-private-methods"), { "loose": true }],
       require('@babel/plugin-proposal-function-bind'),
 
       // Stage 1

@@ -9,6 +9,7 @@ import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/ag
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState } from "../../services/state-manage/home.state.service"
 const remoteShareCodeBaseNumbser = 10000000;
+let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
   let rtmService!: AgoraRTMService;
   let rtcService!: AgoraRTCService;
@@ -25,8 +26,12 @@ export const MainRight = (props: MainCenterProps) => {
     rtmService = props.agoraRTMService;
     rtcService = props.agoraRTCService;
     homeService = props.homeService;
-    agoraRTCEvent(rtcService);
-    agoraRTMEvent(rtmService);
+
+    if(!rtcInit) {
+      rtcInit = true;
+      agoraRTCEvent(rtcService);
+      agoraRTMEvent(rtmService);
+    }
     setOpen(true);
     setOpenMsg('已连接');
   });

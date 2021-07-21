@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron';
 import React from 'react';
 import { lastValueFrom } from 'rxjs';
 import { MainCenter } from '../../components/home/main-center';
+import { TitleBar } from '../../components/title/title-bar';
 import { appid } from '../../services/agora/agora-appid.service';
 import AgoraRTCService from '../../services/agora/agora-rtc.service';
 import AgoraRTMService from '../../services/agora/agora-rtm.service';
@@ -43,14 +44,16 @@ export default class Home extends React.Component {
 
   render() {
     return (
-      <div className="home">
-        <MainCenter
-          localCode={this.localCode}
-          agoraRTCService ={this.agoraRTCService}
-          agoraRTMService ={this.agoraRTMService}
-          homeService ={this.homeService}
-        ></MainCenter>
-      </div>
+        <div className="home">
+          <TitleBar></TitleBar>
+          <MainCenter
+            localCode={this.localCode}
+            agoraRTCService ={this.agoraRTCService}
+            agoraRTMService ={this.agoraRTMService}
+            homeService ={this.homeService}
+          ></MainCenter>
+        </div>
+
     );
   }
 }

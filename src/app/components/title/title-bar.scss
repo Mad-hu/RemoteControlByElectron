@@ -1,0 +1,44 @@
+.title-bar {
+  -webkit-app-region: drag;
+  height: 40px;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  background: #fff;
+  .title-left {
+    display: flex;
+    align-items: center;
+    .title-bar-logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 5px;
+      font-family: "iconfont" !important;
+      font-size: 30px;
+      text-align: center;
+      color: #7a2c9e;
+    }
+    span {
+      font-size: 16px;
+      color: #333;
+    }
+  }
+
+  .title-bar-btns {
+    display: flex;
+    .title-bar-btn {
+      -webkit-app-region: no-drag;
+      margin: 0 10px;
+      font-size: 20px;
+      font-family: "iconfont" !important;
+      cursor: pointer;
+    }
+    .bar-min {
+    }
+    .bar-max {
+    }
+    .bar-close {
+    }
+  }
+}

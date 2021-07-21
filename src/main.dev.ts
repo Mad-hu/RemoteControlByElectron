@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron';
 import { handleKey, handleMouse } from './node/robot/robotjs';
 let mainWindow: BrowserWindow | null = null;
 
@@ -39,6 +39,7 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    frame: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -46,6 +47,9 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
+  if(process.env.NODE_ENV != 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -70,13 +74,27 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
+  Menu.setApplicationMenu(null);
   ipcMain.on('robot', (e, type, data) => {
     if (type === 'mouse') {
         handleMouse(data);
     } else if (type === 'key') {
         handleKey(data);
     }
-})
+  });
+  ipcMain.on('close', () => {
+    mainWindow?.close();
+  });
+  ipcMain.on('min', () => {
+    mainWindow?.minimize();
+  });
+  ipcMain.on('max', () => {
+    if (mainWindow?.isMaximized()) {
+        mainWindow?.unmaximize()
+    } else {
+        mainWindow?.maximize()
+    }
+});
 };
 
 /**
