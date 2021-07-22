@@ -4,10 +4,19 @@ import React from "react";
 import { useRecoilState } from 'recoil';
 import { logoutState } from '../../services/state-manage/base.state.service';
 
-export const LogoutView = () => {
+
+interface LogoutViewProps {
+  agoraLeaveChannel: Function
+}
+export const LogoutView = (props: LogoutViewProps) => {
   const [visible, setVisible] = useRecoilState(logoutState);
   const cannleAction = ()=> setVisible(false);
-  const okAction = ()=> ipcRenderer.send('close');
+  const okAction = ()=> {
+    props.agoraLeaveChannel();
+    setTimeout(() => {
+      ipcRenderer.send('close');
+    }, 100);
+  };
   return(
     <Modal
       visible={visible}

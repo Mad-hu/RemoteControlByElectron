@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React, { useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import AgoraRTCService from "../../services/agora/agora-rtc.service";
+import { rtcClient, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import { MainCenterProps } from "../../services/home/home.service";
 import { controlShowViewState, remoteCodeState } from "../../services/state-manage/home.state.service";
 
@@ -13,7 +13,7 @@ export const ShareBox = (props: MainCenterProps) => {
   const cannleControl = () => {
     try {
       setControlShowView(false);
-      props.agoraRTCService.unsubscribe(AgoraRTCService.remoteStream); // 停止订阅远端屏幕共享流
+      rtcClient.unpublish(shareTrack); // 停止订阅远端屏幕共享流
       const remoteCode = useRecoilValue(remoteCodeState);
       props.agoraRTMService.sendMessage(props.homeService.sendCloseShareScreen(remoteCode)); // 停止远端共享屏幕
     } catch (error) {

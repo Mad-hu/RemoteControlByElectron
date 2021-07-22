@@ -1,14 +1,10 @@
-import AgoraRTCService from "../../services/agora/agora-rtc.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 /* 本机编码 */
 const localCode = Math.floor(Math.random() * 1000000);
-/* 本机屏幕共享流id */
-const shareCode = localCode + 10000000;
 /* 公共房间名称 */
 const channelName = 'testroom';
 export interface MainCenterProps {
   localCode: number;
-  agoraRTCService: AgoraRTCService;
   agoraRTMService: AgoraRTMService;
   homeService: HomeService;
 }
@@ -19,10 +15,6 @@ export class HomeService {
   }
   getLocalCode() {
     return localCode;
-  }
-
-  getShareCode() {
-    return shareCode;
   }
 
   /**

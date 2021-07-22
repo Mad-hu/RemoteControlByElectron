@@ -4,51 +4,55 @@ import { lastValueFrom } from 'rxjs';
 import { MainCenter } from '../../components/home/main-center';
 import { TitleBar } from '../../components/title/title-bar';
 import { appid } from '../../services/agora/agora-appid.service';
-import AgoraRTCService from '../../services/agora/agora-rtc.service';
+import { init, join, rtcClient } from '../../services/agora/agora-rtc-ng.service';
 import AgoraRTMService from '../../services/agora/agora-rtm.service';
 import { HomeService } from '../../services/home/home.service';
 
 export default class Home extends React.Component {
   localCode: number;
-  agoraRTCService = new AgoraRTCService();
+  channel: string;
   agoraRTMService = new AgoraRTMService();
   homeService = new HomeService();
-  constructor(
-    props: any
-  ) {
+  constructor(props: any) {
     super(props);
     this.localCode = this.homeService.getLocalCode();
+    this.channel = this.homeService.getChannel();
   }
   componentDidMount() {
     ipcRenderer.send('show');
-    this.initAgora();
+    this.initAgora4();
   }
   componentWillUnmount() {
-    this.agoraRTMService.leaveChannel();
-    this.agoraRTMService.leaveChannel();
+    this.agoraLeaveChannel();
   }
-  async initAgora() {
-    const channel = this.homeService.getChannel();
+  async initAgora4() {
+    init();
+    await join(appid, this.channel, `${this.localCode}`);
+    await this.initRTM();
+  }
+  async initRTM() {
     try {
-      await lastValueFrom(this.agoraRTCService.init(appid));
-      await lastValueFrom(this.agoraRTCService.join(channel, `${this.localCode}`));
-
       this.agoraRTMService.init(appid);
       await this.agoraRTMService.login(`${this.localCode}`);
-      this.agoraRTMService.createChannel(channel);
+      this.agoraRTMService.createChannel(this.channel);
       this.agoraRTMService.joinChannel();
     } catch (error) {
-      console.log('initAgora:', error);
+      console.log('Agora RTM init Error:', error);
     }
+  }
+  agoraLeaveChannel() {
+    rtcClient.leave();
+    this.agoraRTMService.leaveChannel();
   }
 
   render() {
     return (
         <div className="home">
-          <TitleBar></TitleBar>
+          <TitleBar
+            agoraLeaveChannel={this.agoraLeaveChannel.bind(this)}
+          ></TitleBar>
           <MainCenter
             localCode={this.localCode}
-            agoraRTCService ={this.agoraRTCService}
             agoraRTMService ={this.agoraRTMService}
             homeService ={this.homeService}
           ></MainCenter>

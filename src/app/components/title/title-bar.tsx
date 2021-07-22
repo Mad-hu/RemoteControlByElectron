@@ -3,12 +3,13 @@ import React, { Fragment } from "react"
 import { useSetRecoilState } from "recoil"
 import { logoutState } from "../../services/state-manage/base.state.service"
 import { LogoutView } from "../logout/logout"
-
-export const TitleBar = () => {
+interface TitleBarProps {
+  agoraLeaveChannel: Function
+}
+export const TitleBar = (props: TitleBarProps) => {
   const setVisible = useSetRecoilState(logoutState);
   const onCloseAction = () => {
     setVisible(true);
-    // ipcRenderer.send('close');
   }
   return(
     <Fragment>
@@ -23,7 +24,9 @@ export const TitleBar = () => {
           <div className="title-bar-btn bar-close" onClick={onCloseAction}>&#xe695;</div>
         </div>
       </div>
-      <LogoutView></LogoutView>
+      <LogoutView
+        agoraLeaveChannel={props.agoraLeaveChannel}
+      ></LogoutView>
     </Fragment>
 
   )

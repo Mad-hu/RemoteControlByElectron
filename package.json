@@ -251,7 +251,7 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
-    "agora-rtc-sdk": "^3.6.1",
+    "agora-rtc-sdk-ng": "^4.6.1",
     "agora-rtm-sdk": "^1.4.3",
     "antd": "^4.16.7",
     "classnames": "^2.3.1",

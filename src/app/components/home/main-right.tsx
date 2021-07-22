@@ -1,21 +1,17 @@
-
-import { Stream } from "agora-rtc-sdk";
+import { IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { message } from "antd";
 import { ipcRenderer } from "electron";
-import React, { useEffect } from "react"
-import { RecoilValue, SetterOrUpdater, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import AgoraRTCService, { rtcMessageCategory } from "../../services/agora/agora-rtc.service";
+import React, { useEffect } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState } from "../../services/state-manage/home.state.service"
-const remoteShareCodeBaseNumbser = 10000000;
+
 let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
   let rtmService!: AgoraRTMService;
-  let rtcService!: AgoraRTCService;
   let homeService!: HomeService;
-  let shareStream: Stream | undefined = undefined;
-  let remoteShareCode: number = remoteShareCodeBaseNumbser;
   const setLoading = useSetRecoilState(loadingState);
   const setControlShowView = useSetRecoilState(controlShowViewState);
   const [remoteCode, setRemoteCode] = useRecoilState(remoteCodeState);
@@ -24,12 +20,11 @@ export const MainRight = (props: MainCenterProps) => {
   const [controlText, setControlText] = useRecoilState(controlTextState);
   useEffect(()=> {
     rtmService = props.agoraRTMService;
-    rtcService = props.agoraRTCService;
     homeService = props.homeService;
 
     if(!rtcInit) {
       rtcInit = true;
-      agoraRTCEvent(rtcService);
+      agoraRTCEvent();
       agoraRTMEvent(rtmService);
     }
     setOpen(true);
@@ -49,13 +44,16 @@ export const MainRight = (props: MainCenterProps) => {
       message.error('ID只能是6位数字');
       return;
     }
-    remoteShareCode += parseInt(remoteCode);
+    if(remoteCode == homeService.getLocalCode().toString()) {
+      message.error('不能连接本机');
+      return;
+    }
     setLoading(true);
     try {
       await rtmService.sendMessage(JSON.stringify(homeService.sendStartShareScreen(remoteCode))); // 通知被控端，开始屏幕共享。
       setControlText('正在连接中...');
       setTimeout(() => {
-        if(!shareStream) {
+        if(!shareTrack) {
           setControlText('连接失败');
         }
         setLoading(false);
@@ -65,10 +63,9 @@ export const MainRight = (props: MainCenterProps) => {
     }
   }
   const stopShareAction = () => {
-    rtcService.unpublish(shareStream!);
+    rtcClient.unpublish(shareTrack!);
     setControlText(`未连接`);
-    shareStream = undefined
-    remoteShareCode = remoteShareCodeBaseNumbser;
+    setShareTrack(undefined);
   }
   /**
    * 事件通知，均采用全体通知，不采用单体通知
@@ -105,10 +102,11 @@ export const MainRight = (props: MainCenterProps) => {
     /**
      * 被控端开始屏幕共享
      */
-    agoraRTMService.on(rtmTextMessageCategory.START_SHARE_SCREEN, (jsonData) => {
+    agoraRTMService.on(rtmTextMessageCategory.START_SHARE_SCREEN,async (jsonData) => {
       if(jsonData.remoteUserId == homeService.getLocalCode()) {
-        shareStream = rtcService.createStream({streamID: homeService.getShareCode(), audio: false, video: false, screen: true});
-        rtcService.publish(shareStream);
+        setShareTrack(await getScreenTrack());
+        await rtcClient.setClientRole("host");
+        rtcClient.publish(shareTrack!);
         setControlText(`正在被${jsonData.userId}控制`);
       }
     });
@@ -132,38 +130,24 @@ export const MainRight = (props: MainCenterProps) => {
 
     });
   }
-  const agoraRTCEvent = (agoraRTCService: AgoraRTCService) => {
-    /**
-     * 当远端流加入后，根据屏幕共享流id规则，判断是否开始开始订阅
-     */
-    agoraRTCService.on(rtcMessageCategory.STREAM_ADD, (stream: Stream) => {
-      console.log('STREAM_ADD:', stream);
-      if(stream.getId() == remoteShareCode) {
-        rtcService.subscribe(stream, {video: true, audio: false});
-      }
+  const agoraRTCEvent = () => {
+    rtcClient.on('user-joined', (user: IAgoraRTCRemoteUser) => {
+
     });
     /**
-     * 订阅流成功后，收到的回调，处理流显示
+     * 当远端流加入后，根据屏幕共享流id规则，判断是否开始开始订阅并渲染视频
      */
-    agoraRTCService.on(rtcMessageCategory.STREAM_SUBSCRIBED, (stream: Stream) => {
-      console.log('STREAM_SUBSCRIBED:', stream);
-      if(stream.getId() == remoteShareCode) {
+    rtcClient.on('user-published', async (remoteUser, mediaType) => {
+      console.log('user-published:', remoteUser);
+      if(remoteUser.uid == remoteCode) {
+        await rtcClient.subscribe(remoteUser, 'video');
         setControlShowView(true);
         setLoading(false);
-        stream.play('board', { fit: 'contain' });
+        console.log('subscribe video success');
+        remoteUser.videoTrack!.play('board', { fit: 'contain' });
         homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
       }
     });
-    agoraRTCService.on(rtcMessageCategory.STREAM_PUBLISHED, (evt: any) => {
-      console.log('stream published and send shared message');
-    });
-    agoraRTCService.on(rtcMessageCategory.STREAM_REMOVED, (stream: Stream) => {
-      console.log('STREAM_REMOVED:', stream);
-    });
-    agoraRTCService.on(rtcMessageCategory.PEER_LEAVE, (attr: { uid: string; reason: string; }) => {
-      console.log('PEER_LEAVE:', attr);
-    });
-
   }
   return (
     <section className="content">
