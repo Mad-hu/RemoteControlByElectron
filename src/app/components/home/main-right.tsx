@@ -6,7 +6,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
-import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState } from "../../services/state-manage/home.state.service"
+import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState, shareScreenState } from "../../services/state-manage/home.state.service"
 
 let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
@@ -19,6 +19,7 @@ export const MainRight = (props: MainCenterProps) => {
   const [open, setOpen] = useRecoilState(openState);
   const [openMsg, setOpenMsg] = useRecoilState(openMsgState);
   const [controlText, setControlText] = useRecoilState(controlTextState);
+  const [shareScreen, setShareScreen] = useRecoilState(shareScreenState);
   useEffect(()=> {
     rtmService = props.agoraRTMService;
     homeService = props.homeService;
@@ -68,6 +69,7 @@ export const MainRight = (props: MainCenterProps) => {
     rtcClient.unpublish(shareTrack!);
     setControlText(`未连接`);
     setShareTrack(undefined);
+    setShareScreen(false);
   }
   /**
    * 事件通知，均采用全体通知，不采用单体通知
@@ -105,11 +107,17 @@ export const MainRight = (props: MainCenterProps) => {
      * 被控端开始屏幕共享
      */
     agoraRTMService.on(rtmTextMessageCategory.START_SHARE_SCREEN,async (jsonData) => {
+      // 正在被控制，不能再被其他人控制。
+      if(shareScreen) {
+
+        return;
+      }
       if(jsonData.remoteUserId == homeService.getLocalCode()) {
         setShareTrack(await getScreenTrack());
-        await rtcClient.setClientRole("host");
+        // await rtcClient.setClientRole("host");
         rtcClient.publish(shareTrack!);
         setControlText(`正在被${jsonData.userId}控制`);
+        setShareScreen(true);
       }
     });
     agoraRTMService.on(rtmTextMessageCategory.MOUSE_DOUBLE_CLICK, (jsonData) => {
@@ -156,6 +164,18 @@ export const MainRight = (props: MainCenterProps) => {
         console.log('user-published error:', error);
       }
     });
+    // 当远端停止发布，检查流id与本地连接的远程id是否一致。 一致就停止
+    rtcClient.on('user-unpublished', async (remoteUser, mediaType) => {
+      console.log('user-unpublished:', remoteUser);
+      if(remoteUser.uid == remoteCode) {
+        remoteUser.videoTrack!.stop(); // 停止播放
+        await rtcClient.unsubscribe(remoteUser, 'video'); // 取消订阅
+        setControlShowView(false); // 关闭远程控制页面
+        homeService.unListenMouseAndKeyEvent();
+        setControlText('远端已断开连接');
+        console.log('unsubscribe video success');
+      }
+    })
   }
   return (
     <section className="content">

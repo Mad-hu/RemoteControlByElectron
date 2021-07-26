@@ -1,12 +1,12 @@
 import AgoraRTC, { ClientConfig, IAgoraRTCClient, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
 
-export let shareTrack: ILocalVideoTrack | undefined;
+export let shareTrack: any;
 export let rtcClient!: IAgoraRTCClient;
 
 export const setShareTrack = (track: ILocalVideoTrack | undefined) => {
   shareTrack = track;
 }
-export const init = (clientConfig: ClientConfig = { mode: 'live', codec: 'vp8' }) => {
+export const init = (clientConfig: ClientConfig = { mode: 'rtc', codec: 'vp8' }) => {
   rtcClient = AgoraRTC.createClient(clientConfig);
 }
 export const join = (appid: string, channel: string, uid: any, tokenKey = null) => {
@@ -19,7 +19,10 @@ export const getScreenTrack = async() => {
   if(screenSource && screenSource.length != 0) {
     screenId = screenSource[0].id;
   }
-  shareTrack = await AgoraRTC.createScreenVideoTrack({electronScreenSourceId: screenId}, 'disable');
+  shareTrack = await AgoraRTC.createScreenVideoTrack({electronScreenSourceId: screenId});
+  if(shareTrack.length == 2) {
+    return shareTrack[0];
+  }
   return shareTrack;
 }
 const getScreenSource = () => {
