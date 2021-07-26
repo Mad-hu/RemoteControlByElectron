@@ -10,11 +10,12 @@ import { controlShowViewState, controlTextState, loadingState, openMsgState, ope
 
 let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
+  let remoteCode = '';
   let rtmService!: AgoraRTMService;
   let homeService!: HomeService;
   const setLoading = useSetRecoilState(loadingState);
   const setControlShowView = useSetRecoilState(controlShowViewState);
-  const [remoteCode, setRemoteCode] = useRecoilState(remoteCodeState);
+  // const [remoteCode, setRemoteCode] = useRecoilState(remoteCodeState);
   const [open, setOpen] = useRecoilState(openState);
   const [openMsg, setOpenMsg] = useRecoilState(openMsgState);
   const [controlText, setControlText] = useRecoilState(controlTextState);
@@ -32,7 +33,8 @@ export const MainRight = (props: MainCenterProps) => {
   });
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRemoteCode(e.target.value);
+    // setRemoteCode(e.target.value);
+    remoteCode = e.target.value;
   }
   const handleSubmit = async () => {
     if(remoteCode == '' || !remoteCode) {
@@ -139,13 +141,19 @@ export const MainRight = (props: MainCenterProps) => {
      */
     rtcClient.on('user-published', async (remoteUser, mediaType) => {
       console.log('user-published:', remoteUser);
-      if(remoteUser.uid == remoteCode) {
-        await rtcClient.subscribe(remoteUser, 'video');
-        setControlShowView(true);
-        setLoading(false);
-        console.log('subscribe video success');
-        remoteUser.videoTrack!.play('board', { fit: 'contain' });
-        homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
+      console.log('remoteCode:', remoteCode);
+      console.log('remoteUserID:', remoteUser.uid);
+      try {
+        if(remoteUser.uid == remoteCode) {
+          await rtcClient.subscribe(remoteUser, 'video');
+          setControlShowView(true);
+          setLoading(false);
+          console.log('subscribe video success');
+          remoteUser.videoTrack!.play('board', { fit: 'contain' });
+          homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
+        }
+      } catch (error) {
+        console.log('user-published error:', error);
       }
     });
   }

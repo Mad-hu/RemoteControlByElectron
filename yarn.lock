@@ -4594,10 +4594,10 @@ electron-updater@^4.3.4:
     lodash.isequal "^4.5.0"
     semver "^7.3.5"
 
-electron@^11.4.9:
-  version "11.4.10"
-  resolved "https://repo.huaweicloud.com/repository/npm/electron/-/electron-11.4.10.tgz#7bcbca82810b82c2f2765824c5e11e3061272ea4"
-  integrity sha512-aQTRgRdHwCW68gxz9qvGCfOUvR4NBbdecLB/mEWX8fMncDFvPMmm+dq2D6zSWWVEKywmsj3+wMMVn3UV2Cl2CQ==
+electron@11.4.9:
+  version "11.4.9"
+  resolved "https://registry.nlark.com/electron/download/electron-11.4.9.tgz?cache=0&sync_timestamp=1626912100994&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felectron%2Fdownload%2Felectron-11.4.9.tgz#87a4ab8a355853738e17e89832c57c4cbf9d55c0"
+  integrity sha1-h6SrijVYU3OOF+iYMsV8TL+dVcA=
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
