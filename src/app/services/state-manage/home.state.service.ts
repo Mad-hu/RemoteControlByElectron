@@ -32,3 +32,8 @@ export const controlShowViewState  = atom({
   key: 'controlShowViewState',
   default: false,
 });
+
+export const shareScreenState  = atom({
+  key: 'shareScreenState',
+  default: false,
+});

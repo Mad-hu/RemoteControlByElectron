@@ -1,6 +1,6 @@
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 /* 本机编码 */
-const localCode = Math.floor(Math.random() * 1000000);
+const localCode = (Math.floor(Math.random() * 1000000) + new Date().getTime()).toString().substring(7);
 /* 公共房间名称 */
 const channelName = 'testroom';
 export interface MainCenterProps {
@@ -57,6 +57,10 @@ export class HomeService {
       userId: userId,
       robot: data
     }
+  }
+  unListenMouseAndKeyEvent() {
+    window.onkeydown = null;
+    window.onmouseup = null;
   }
   listenMouseAndKeyEvent(userId: any, agoraRTMService: AgoraRTMService) {
     // 监听键盘按下事件
