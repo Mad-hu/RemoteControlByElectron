@@ -171,22 +171,12 @@ export const MainRight = (props: MainCenterProps) => {
           setControlShowView(true);
           setLoading(false);
           console.log('subscribe video success');
-          remoteUser.videoTrack!.play('board', { fit: 'contain' });
-          // console.log('remoteUser.videoTrack',JSON.stringify(remoteUser.videoTrack?.getStats()));
-          const shareScreenHeight = 1080;
-          const shareScreenWidth = 1920;
-          let shareControlWindowWidth = shareScreenWidth * window.screen.availHeight / shareScreenHeight;
-          let shareControlWindowHeight = window.screen.availHeight;
-          if(shareScreenWidth < shareScreenHeight) {
-            shareControlWindowHeight = shareScreenHeight * window.screen.availWidth / shareScreenWidth;
-            shareControlWindowWidth = window.screen.availWidth;
+          if(remoteUser.hasVideo) {
+            remoteUser.videoTrack!.play('board', { fit: 'contain' });
+            setWindowBounds(1920, 1080);
+            homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
+            setTitleVisible(false);
           }
-
-          setWindowSize(shareControlWindowWidth, shareControlWindowHeight);
-          setWindowCenter();
-          setWindowResizeable(false);
-          homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
-          setTitleVisible(false);
         }
       } catch (error) {
         console.log('user-published error:', error);
@@ -206,6 +196,19 @@ export const MainRight = (props: MainCenterProps) => {
         console.log('unsubscribe video success');
       }
     })
+  }
+  const setWindowBounds = (width: number, height: number) => {
+    const shareScreenHeight = width;
+    const shareScreenWidth = height;
+    let shareControlWindowWidth = shareScreenWidth * window.screen.availHeight / shareScreenHeight;
+    let shareControlWindowHeight = window.screen.availHeight;
+    if(shareScreenWidth < shareScreenHeight) {
+      shareControlWindowHeight = shareScreenHeight * window.screen.availWidth / shareScreenWidth;
+      shareControlWindowWidth = window.screen.availWidth;
+    }
+    setWindowSize(shareControlWindowWidth, shareControlWindowHeight);
+    setWindowCenter();
+    setWindowResizeable(false);
   }
   return (
     <section className="content">
