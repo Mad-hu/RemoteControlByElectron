@@ -9,3 +9,8 @@ export const setWindowCenter = () => {
 export const setWindowResizeable = (resizable: boolean) => {
   win.resizable = resizable;
 }
+export const resizeOriginalWindow = () => {
+  win.setSize(1024, 576);
+  win.resizable = true;
+  win.center();
+}

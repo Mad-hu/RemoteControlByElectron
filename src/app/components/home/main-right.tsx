@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
-import { setWindowCenter, setWindowResizeable, setWindowSize } from "../../services/electron.service";
+import { resizeOriginalWindow, setWindowCenter, setWindowResizeable, setWindowSize } from "../../services/electron.service";
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
 import { titleVisibleState } from "../../services/state-manage/base.state.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState } from "../../services/state-manage/home.state.service"
@@ -201,6 +201,8 @@ export const MainRight = (props: MainCenterProps) => {
         setControlShowView(false); // 关闭远程控制页面
         homeService.unListenMouseAndKeyEvent();
         setControlText('远端已断开连接');
+        setTitleVisible(true);
+        resizeOriginalWindow();
         console.log('unsubscribe video success');
       }
     })
