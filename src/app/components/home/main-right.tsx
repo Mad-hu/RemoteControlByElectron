@@ -8,9 +8,9 @@ import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/ag
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState, shareScreenState } from "../../services/state-manage/home.state.service"
 
+let remoteCode = '';
 let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
-  let remoteCode = '';
   let rtmService!: AgoraRTMService;
   let homeService!: HomeService;
   const setLoading = useSetRecoilState(loadingState);
@@ -109,12 +109,10 @@ export const MainRight = (props: MainCenterProps) => {
     agoraRTMService.on(rtmTextMessageCategory.START_SHARE_SCREEN,async (jsonData) => {
       // 正在被控制，不能再被其他人控制。
       if(shareScreen) {
-
         return;
       }
       if(jsonData.remoteUserId == homeService.getLocalCode()) {
         setShareTrack(await getScreenTrack());
-        // await rtcClient.setClientRole("host");
         rtcClient.publish(shareTrack!);
         setControlText(`正在被${jsonData.userId}控制`);
         setShareScreen(true);
@@ -153,6 +151,7 @@ export const MainRight = (props: MainCenterProps) => {
       console.log('remoteUserID:', remoteUser.uid);
       try {
         if(remoteUser.uid == remoteCode) {
+          console.log('getCurrentFrameData::', remoteUser.videoTrack!.getCurrentFrameData())
           await rtcClient.subscribe(remoteUser, 'video');
           setControlShowView(true);
           setLoading(false);
@@ -167,8 +166,8 @@ export const MainRight = (props: MainCenterProps) => {
     // 当远端停止发布，检查流id与本地连接的远程id是否一致。 一致就停止
     rtcClient.on('user-unpublished', async (remoteUser, mediaType) => {
       console.log('user-unpublished:', remoteUser);
-      if(remoteUser.uid == remoteCode) {
-        remoteUser.videoTrack!.stop(); // 停止播放
+      if(remoteUser.uid == remoteCode && remoteUser.videoTrack) {
+        remoteUser.videoTrack.stop(); // 停止播放
         await rtcClient.unsubscribe(remoteUser, 'video'); // 取消订阅
         setControlShowView(false); // 关闭远程控制页面
         homeService.unListenMouseAndKeyEvent();
