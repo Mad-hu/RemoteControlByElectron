@@ -4,7 +4,7 @@ const localCode = (Math.floor(Math.random() * 1000000) + new Date().getTime()).t
 /* 公共房间名称 */
 const channelName = 'testroom';
 export interface MainCenterProps {
-  localCode: number;
+  localCode: string;
   agoraRTMService: AgoraRTMService;
   homeService: HomeService;
 }
@@ -29,6 +29,20 @@ export class HomeService {
     }
   }
 
+  /**
+   * 告诉远端，已经准备好了屏幕共享，你可以拉流了，并且把屏幕共享的参数附带
+   *
+   * @param {(string | number)} userId 控制端用户id
+   * @param {{width: number, height: number}} size 被控端屏幕宽高。
+   * @return {*}
+   * @memberof HomeService
+   */
+  sendReadyShareScreen(userId: string | number, size: {width: number, height: number}) {
+    return {
+      command: rtmTextMessageCategory.READY_SHARE_SCREEN,
+      userId, size
+    }
+  }
 
   /**
    * 告诉远端，你现在需要开始共享屏幕
@@ -58,10 +72,12 @@ export class HomeService {
       robot: data
     }
   }
+
   unListenMouseAndKeyEvent() {
     window.onkeydown = null;
     window.onmouseup = null;
   }
+
   listenMouseAndKeyEvent(userId: any, agoraRTMService: AgoraRTMService) {
     // 监听键盘按下事件
     window.onkeydown = (e) => {
@@ -78,13 +94,13 @@ export class HomeService {
     // 监听鼠标点击事件
     window.onmouseup = (e) => {
       const target = e.target;
-      const canvs = document.getElementsByTagName('canvas')[0];
-      const zoomCanvas = parseInt(canvs.style.zoom);
-      const videoWidth = canvs.offsetWidth * zoomCanvas;
-      const videoHeight = canvs.offsetHeight * zoomCanvas;
-      if(target == canvs) {
-        const clientX = e.clientX - (canvs.getBoundingClientRect().left == 0? canvs.getBoundingClientRect().left: canvs.getBoundingClientRect().left * zoomCanvas);
-        const clientY = e.clientY - (canvs.getBoundingClientRect().top == 0?canvs.getBoundingClientRect().top: canvs.getBoundingClientRect().top * zoomCanvas);
+      const videoObj = document.getElementsByTagName('video')[0];
+      const zoomCanvas = parseInt(videoObj.style.zoom);
+      const videoWidth = videoObj.offsetWidth * zoomCanvas;
+      const videoHeight = videoObj.offsetHeight * zoomCanvas;
+      if(target == videoObj) {
+        const clientX = e.clientX - (videoObj.getBoundingClientRect().left == 0? videoObj.getBoundingClientRect().left: videoObj.getBoundingClientRect().left * zoomCanvas);
+        const clientY = e.clientY - (videoObj.getBoundingClientRect().top == 0?videoObj.getBoundingClientRect().top: videoObj.getBoundingClientRect().top * zoomCanvas);
         let data = {
           clientX,
           clientY,

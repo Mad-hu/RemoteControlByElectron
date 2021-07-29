@@ -38,11 +38,13 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728,
+    height: 576,
     frame: false,
     icon: getAssetPath('icon.png'),
+    resizable: true,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true
     },
   });
 
@@ -95,7 +97,7 @@ const createWindow = async () => {
     } else {
         mainWindow?.maximize()
     }
-});
+  });
 };
 
 /**

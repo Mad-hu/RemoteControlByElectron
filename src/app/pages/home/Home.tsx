@@ -9,7 +9,7 @@ import AgoraRTMService from '../../services/agora/agora-rtm.service';
 import { HomeService } from '../../services/home/home.service';
 
 export default class Home extends React.Component {
-  localCode: number;
+  localCode: string;
   channel: string;
   agoraRTMService = new AgoraRTMService();
   homeService = new HomeService();

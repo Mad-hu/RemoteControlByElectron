@@ -10,11 +10,11 @@ export const ShareBox = (props: MainCenterProps) => {
   const shareBoxRef: React.RefObject<HTMLDivElement> = React.createRef();
   const setControlShowView = useSetRecoilState(controlShowViewState);
   const [barVisible, setBarVisible] = useState(true);
+  const remoteCode = useRecoilValue(remoteCodeState);
   const cannleControl = () => {
     try {
       setControlShowView(false);
       rtcClient.unpublish(shareTrack); // 停止订阅远端屏幕共享流
-      const remoteCode = useRecoilValue(remoteCodeState);
       props.agoraRTMService.sendMessage(props.homeService.sendCloseShareScreen(remoteCode)); // 停止远端共享屏幕
     } catch (error) {
       console.log('cannleControl catch error:', error);

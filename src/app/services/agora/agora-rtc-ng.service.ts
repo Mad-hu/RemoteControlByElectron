@@ -21,9 +21,9 @@ export const getScreenTrack = async() => {
   }
   shareTrack = await AgoraRTC.createScreenVideoTrack({electronScreenSourceId: screenId});
   if(shareTrack.length == 2) {
-    return shareTrack[0];
+    return {shareTrack: shareTrack[0], size: screenSource[0].thumbnail.getSize()};
   }
-  return shareTrack;
+  return {shareTrack, size: screenSource[0].thumbnail.getSize()};
 }
 const getScreenSource = () => {
   return AgoraRTC.getElectronScreenSources('screen');

@@ -29,11 +29,14 @@
     height: 33px;
     width: 120px;
     padding: 0 10px;
-    position: relative;
+    position: absolute;
+    z-index: 999999;
     transition: 0.3s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    -webkit-app-region: no-drag;
+
   }
 
   .sharebox {

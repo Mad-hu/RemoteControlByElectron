@@ -5,21 +5,24 @@ import React, { useEffect } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
+import { setWindowCenter, setWindowResizeable, setWindowSize } from "../../services/electron.service";
 import { HomeService, MainCenterProps } from "../../services/home/home.service";
-import { controlShowViewState, controlTextState, loadingState, openMsgState, openState, remoteCodeState, shareScreenState } from "../../services/state-manage/home.state.service"
+import { titleVisibleState } from "../../services/state-manage/base.state.service";
+import { controlShowViewState, controlTextState, loadingState, openMsgState, openState } from "../../services/state-manage/home.state.service"
 
 let remoteCode = '';
 let rtcInit = false;
 export const MainRight = (props: MainCenterProps) => {
+  let shareScreenState = false;
   let rtmService!: AgoraRTMService;
   let homeService!: HomeService;
+  const setTitleVisible = useSetRecoilState(titleVisibleState);
   const setLoading = useSetRecoilState(loadingState);
   const setControlShowView = useSetRecoilState(controlShowViewState);
   // const [remoteCode, setRemoteCode] = useRecoilState(remoteCodeState);
   const [open, setOpen] = useRecoilState(openState);
   const [openMsg, setOpenMsg] = useRecoilState(openMsgState);
   const [controlText, setControlText] = useRecoilState(controlTextState);
-  const [shareScreen, setShareScreen] = useRecoilState(shareScreenState);
   useEffect(()=> {
     rtmService = props.agoraRTMService;
     homeService = props.homeService;
@@ -69,7 +72,7 @@ export const MainRight = (props: MainCenterProps) => {
     rtcClient.unpublish(shareTrack!);
     setControlText(`未连接`);
     setShareTrack(undefined);
-    setShareScreen(false);
+    shareScreenState = false;
   }
   /**
    * 事件通知，均采用全体通知，不采用单体通知
@@ -108,14 +111,27 @@ export const MainRight = (props: MainCenterProps) => {
      */
     agoraRTMService.on(rtmTextMessageCategory.START_SHARE_SCREEN,async (jsonData) => {
       // 正在被控制，不能再被其他人控制。
-      if(shareScreen) {
+      if(shareScreenState) {
         return;
       }
-      if(jsonData.remoteUserId == homeService.getLocalCode()) {
-        setShareTrack(await getScreenTrack());
-        rtcClient.publish(shareTrack!);
-        setControlText(`正在被${jsonData.userId}控制`);
-        setShareScreen(true);
+      try {
+        if(jsonData.remoteUserId == homeService.getLocalCode()) {
+          const {shareTrack, size} = await getScreenTrack();
+          setShareTrack(shareTrack);
+          await rtcClient.publish(shareTrack!);
+          setControlText(`正在被${jsonData.userId}控制`);
+          shareScreenState = true;
+          homeService.sendReadyShareScreen(jsonData.userId, size);
+        }
+      } catch (error) {
+
+      }
+    });
+    /**
+     * 被控端已经开始屏幕共享
+     */
+     agoraRTMService.on(rtmTextMessageCategory.READY_SHARE_SCREEN, (jsonData) => {
+      if(jsonData.userId == homeService.getLocalCode()) {
       }
     });
     agoraRTMService.on(rtmTextMessageCategory.MOUSE_DOUBLE_CLICK, (jsonData) => {
@@ -151,13 +167,26 @@ export const MainRight = (props: MainCenterProps) => {
       console.log('remoteUserID:', remoteUser.uid);
       try {
         if(remoteUser.uid == remoteCode) {
-          console.log('getCurrentFrameData::', remoteUser.videoTrack!.getCurrentFrameData())
           await rtcClient.subscribe(remoteUser, 'video');
           setControlShowView(true);
           setLoading(false);
           console.log('subscribe video success');
           remoteUser.videoTrack!.play('board', { fit: 'contain' });
+          // console.log('remoteUser.videoTrack',JSON.stringify(remoteUser.videoTrack?.getStats()));
+          const shareScreenHeight = 1080;
+          const shareScreenWidth = 1920;
+          let shareControlWindowWidth = shareScreenWidth * window.screen.availHeight / shareScreenHeight;
+          let shareControlWindowHeight = window.screen.availHeight;
+          if(shareScreenWidth < shareScreenHeight) {
+            shareControlWindowHeight = shareScreenHeight * window.screen.availWidth / shareScreenWidth;
+            shareControlWindowWidth = window.screen.availWidth;
+          }
+
+          setWindowSize(shareControlWindowWidth, shareControlWindowHeight);
+          setWindowCenter();
+          setWindowResizeable(false);
           homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
+          setTitleVisible(false);
         }
       } catch (error) {
         console.log('user-published error:', error);

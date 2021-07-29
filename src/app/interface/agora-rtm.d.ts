@@ -1,5 +1,9 @@
 export interface RtmTextMessageCategory {
   /**
+   * ready shanre screen
+   **/
+   READY_SHARE_SCREEN: string,
+  /**
    * start shanre screen
    **/
   START_SHARE_SCREEN: string,
