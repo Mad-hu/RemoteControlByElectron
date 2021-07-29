@@ -3,6 +3,14 @@ import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/ag
 const localCode = (Math.floor(Math.random() * 1000000) + new Date().getTime()).toString().substring(7);
 /* 公共房间名称 */
 const channelName = 'testroom';
+let remoteCode = '';
+
+export const setRemoteCode = (code: string) => {
+  remoteCode = code;
+}
+export const getRemoteCode = () => {
+  return remoteCode;
+}
 export interface MainCenterProps {
   localCode: string;
   agoraRTMService: AgoraRTMService;

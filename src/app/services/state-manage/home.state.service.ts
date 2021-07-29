@@ -10,11 +10,6 @@ export const loadingState = atom({
   default: false,
 });
 
-export const remoteCodeState = atom({
-  key: 'remoteCodeState',
-  default: '',
-});
-
 export const openState  = atom({
   key: 'openState',
   default: false,

@@ -6,7 +6,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 import { resizeOriginalWindow, setWindowCenter, setWindowResizeable, setWindowSize } from "../../services/electron.service";
-import { HomeService, MainCenterProps } from "../../services/home/home.service";
+import { HomeService, MainCenterProps, setRemoteCode } from "../../services/home/home.service";
 import { titleVisibleState } from "../../services/state-manage/base.state.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState } from "../../services/state-manage/home.state.service"
 
@@ -19,7 +19,6 @@ export const MainRight = (props: MainCenterProps) => {
   const setTitleVisible = useSetRecoilState(titleVisibleState);
   const setLoading = useSetRecoilState(loadingState);
   const setControlShowView = useSetRecoilState(controlShowViewState);
-  // const [remoteCode, setRemoteCode] = useRecoilState(remoteCodeState);
   const [open, setOpen] = useRecoilState(openState);
   const [openMsg, setOpenMsg] = useRecoilState(openMsgState);
   const [controlText, setControlText] = useRecoilState(controlTextState);
@@ -37,8 +36,8 @@ export const MainRight = (props: MainCenterProps) => {
   });
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setRemoteCode(e.target.value);
     remoteCode = e.target.value;
+    setRemoteCode(remoteCode);
   }
   const handleSubmit = async () => {
     if(remoteCode == '' || !remoteCode) {

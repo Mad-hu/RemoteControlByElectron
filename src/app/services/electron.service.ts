@@ -1,7 +1,7 @@
 import { remote } from "electron"
 const win = remote.getCurrentWindow();
 export const setWindowSize = (width: number, height: number) => {
-  win.setSize(width, height);
+  win.setSize(Math.round(width), Math.round(height));
 }
 export const setWindowCenter = () => {
   win.center();

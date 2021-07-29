@@ -1,18 +1,17 @@
 import classNames from "classnames";
 import React, { useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { rtcClient, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import { resizeOriginalWindow } from "../../services/electron.service";
-import { MainCenterProps } from "../../services/home/home.service";
+import { getRemoteCode, MainCenterProps } from "../../services/home/home.service";
 import { titleVisibleState } from "../../services/state-manage/base.state.service";
-import { controlShowViewState, remoteCodeState } from "../../services/state-manage/home.state.service";
+import { controlShowViewState } from "../../services/state-manage/home.state.service";
 
 export const ShareBox = (props: MainCenterProps) => {
   const shareboardRef: React.RefObject<HTMLDivElement> =  React.createRef();
   const shareBoxRef: React.RefObject<HTMLDivElement> = React.createRef();
   const setControlShowView = useSetRecoilState(controlShowViewState);
   const [barVisible, setBarVisible] = useState(true);
-  const remoteCode = useRecoilValue(remoteCodeState);
   const setTitleVisible = useSetRecoilState(titleVisibleState);
   const cannleControl = () => {
     try {
@@ -20,7 +19,7 @@ export const ShareBox = (props: MainCenterProps) => {
       setControlShowView(false);
       resizeOriginalWindow();
       rtcClient.unpublish(shareTrack); // 停止订阅远端屏幕共享流
-      props.agoraRTMService.sendMessage(props.homeService.sendCloseShareScreen(remoteCode)); // 停止远端共享屏幕
+      props.agoraRTMService.sendMessage(props.homeService.sendCloseShareScreen(getRemoteCode())); // 停止远端共享屏幕
     } catch (error) {
       console.log('cannleControl catch error:', error);
     }
