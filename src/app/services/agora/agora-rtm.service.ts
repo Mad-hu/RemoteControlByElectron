@@ -2,6 +2,7 @@ import AgoraRTM, { RtmChannel, RtmClient, RtmEvents, RtmTextMessage } from 'agor
 import { EventEmitter } from 'events';
 import { RtmTextMessageCategory } from '../../interface/agora-rtm';
 export const rtmTextMessageCategory: RtmTextMessageCategory = {
+  READY_SHARE_SCREEN: 'READY_SHARE_SCREEN',
   /* start shanre screen */
   START_SHARE_SCREEN: 'START_SHARE_SCREEN',
   /* stop share screen */
@@ -96,7 +97,7 @@ export default class AgoraRTMService extends EventEmitter {
 
   sendMessage(msg: any) {
     console.log('sendMessage:', { text: msg });
-    return this.chan.sendMessage({ text: msg });
+    return this.chan.sendMessage({ text: JSON.stringify(msg) });
   }
 
   messageEvent() {
@@ -108,7 +109,7 @@ export default class AgoraRTMService extends EventEmitter {
     const memberLeft: keyof RtmEvents.RtmChannelEvents = 'MemberLeft';
 
     this.chan.on(channelMessage, (message, memberId, messagePros) => {
-      console.log('channelMessage:' ,message, memberId, messagePros)
+      console.log('channelMessage:' ,message, memberId, messagePros);
       const jsonData = JSON.parse((<RtmTextMessage>message).text);
       const command: keyof RtmTextMessageCategory = jsonData.command;
       this.emit(command, jsonData);

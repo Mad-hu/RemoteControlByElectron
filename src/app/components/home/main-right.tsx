@@ -55,7 +55,7 @@ export const MainRight = (props: MainCenterProps) => {
     }
     setLoading(true);
     try {
-      await rtmService.sendMessage(JSON.stringify(homeService.sendStartShareScreen(remoteCode))); // 通知被控端，开始屏幕共享。
+      await rtmService.sendMessage(homeService.sendStartShareScreen(remoteCode)); // 通知被控端，开始屏幕共享。
       setControlText('正在连接中...');
       setTimeout(() => {
         if(!shareTrack) {
