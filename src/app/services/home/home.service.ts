@@ -11,6 +11,11 @@ export const setRemoteCode = (code: string) => {
 export const getRemoteCode = () => {
   return remoteCode;
 }
+
+export const unListenMouseAndKeyEvent = () => {
+  window.onkeydown = null;
+  window.onmouseup = null;
+}
 export interface MainCenterProps {
   localCode: string;
   agoraRTMService: AgoraRTMService;
@@ -79,11 +84,6 @@ export class HomeService {
       userId: userId,
       robot: data
     }
-  }
-
-  unListenMouseAndKeyEvent() {
-    window.onkeydown = null;
-    window.onmouseup = null;
   }
 
   listenMouseAndKeyEvent(userId: any, agoraRTMService: AgoraRTMService) {

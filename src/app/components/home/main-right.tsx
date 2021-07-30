@@ -6,7 +6,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { getScreenTrack, rtcClient, setShareTrack, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import AgoraRTMService, { rtmTextMessageCategory } from "../../services/agora/agora-rtm.service";
 import { resizeOriginalWindow, setWindowCenter, setWindowResizeable, setWindowSize } from "../../services/electron.service";
-import { HomeService, MainCenterProps, setRemoteCode } from "../../services/home/home.service";
+import { HomeService, MainCenterProps, setRemoteCode, unListenMouseAndKeyEvent } from "../../services/home/home.service";
 import { titleVisibleState } from "../../services/state-manage/base.state.service";
 import { controlShowViewState, controlTextState, loadingState, openMsgState, openState } from "../../services/state-manage/home.state.service"
 
@@ -172,9 +172,12 @@ export const MainRight = (props: MainCenterProps) => {
           console.log('subscribe video success');
           if(remoteUser.hasVideo) {
             remoteUser.videoTrack!.play('board', { fit: 'contain' });
-            setWindowBounds(1920, 1080);
+            setTimeout(() => {
+              console.log(remoteUser.videoTrack?.getCurrentFrameData());
+            }, 500);
             homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
             setTitleVisible(false);
+
           }
         }
       } catch (error) {
@@ -188,7 +191,7 @@ export const MainRight = (props: MainCenterProps) => {
         remoteUser.videoTrack.stop(); // 停止播放
         await rtcClient.unsubscribe(remoteUser, 'video'); // 取消订阅
         setControlShowView(false); // 关闭远程控制页面
-        homeService.unListenMouseAndKeyEvent();
+        unListenMouseAndKeyEvent();
         setControlText('远端已断开连接');
         setTitleVisible(true);
         resizeOriginalWindow();

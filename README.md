@@ -2,11 +2,21 @@
   RemoteControlByElectron uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
 </p>
 <br>
+<img src="./main.png" width="100%"/>
 
-## In Development
+<br>
+<img src="./control.jpg" width="100%" />
 
-项目还在开发中..内部测试项目已经完事了，核心功能都可以用，等我搬过来
+<br>
+<br>
 
+## Working with Timeline !
+- keyboard not working!
+- doubleClick not working!
+- right-mouse button not working!
+- mouse Areas overlap!
+- sharescreen Time delay!
+ 
 ## Install
 
 First, clone the repo via git and install dependencies:
