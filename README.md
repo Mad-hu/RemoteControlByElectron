@@ -8,9 +8,8 @@
 <img src="./control.jpg" width="100%" />
 
 <br>
-<br>
 
-## Working with Timeline !
+## Not Working with Timeline !
 - keyboard not working!
 - doubleClick not working!
 - right-mouse button not working!
