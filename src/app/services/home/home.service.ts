@@ -11,6 +11,10 @@ export const setRemoteCode = (code: string) => {
 export const getRemoteCode = () => {
   return remoteCode;
 }
+export const unListenMouseAndKeyEvent = () => {
+  window.onkeydown = null;
+  window.onmouseup = null;
+}
 export interface MainCenterProps {
   localCode: string;
   agoraRTMService: AgoraRTMService;
@@ -81,10 +85,7 @@ export class HomeService {
     }
   }
 
-  unListenMouseAndKeyEvent() {
-    window.onkeydown = null;
-    window.onmouseup = null;
-  }
+
 
   listenMouseAndKeyEvent(userId: any, agoraRTMService: AgoraRTMService) {
     // 监听键盘按下事件
@@ -103,7 +104,7 @@ export class HomeService {
     window.onmouseup = (e) => {
       const target = e.target;
       const videoObj = document.getElementsByTagName('video')[0];
-      const zoomCanvas = parseInt(videoObj.style.zoom);
+      const zoomCanvas = 1;
       const videoWidth = videoObj.offsetWidth * zoomCanvas;
       const videoHeight = videoObj.offsetHeight * zoomCanvas;
       if(target == videoObj) {

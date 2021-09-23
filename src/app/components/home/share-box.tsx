@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { useSetRecoilState } from "recoil";
 import { rtcClient, shareTrack } from "../../services/agora/agora-rtc-ng.service";
 import { resizeOriginalWindow } from "../../services/electron.service";
-import { getRemoteCode, MainCenterProps } from "../../services/home/home.service";
+import { getRemoteCode, MainCenterProps, unListenMouseAndKeyEvent } from "../../services/home/home.service";
 import { titleVisibleState } from "../../services/state-manage/base.state.service";
 import { controlShowViewState } from "../../services/state-manage/home.state.service";
 
@@ -19,6 +19,7 @@ export const ShareBox = (props: MainCenterProps) => {
       setControlShowView(false);
       resizeOriginalWindow();
       rtcClient.unpublish(shareTrack); // 停止订阅远端屏幕共享流
+      unListenMouseAndKeyEvent();
       props.agoraRTMService.sendMessage(props.homeService.sendCloseShareScreen(getRemoteCode())); // 停止远端共享屏幕
     } catch (error) {
       console.log('cannleControl catch error:', error);
