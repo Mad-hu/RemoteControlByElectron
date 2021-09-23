@@ -85,8 +85,6 @@ export class HomeService {
     }
   }
 
-
-
   listenMouseAndKeyEvent(userId: any, agoraRTMService: AgoraRTMService) {
     // 监听键盘按下事件
     window.onkeydown = (e) => {

@@ -173,9 +173,8 @@ export const MainRight = (props: MainCenterProps) => {
           if(remoteUser.hasVideo) {
             remoteUser.videoTrack!.play('board', { fit: 'contain' });
             setTimeout(() => {
-              console.log('getCurrentFrameData::', remoteUser.videoTrack?.getCurrentFrameData());
+              console.log(remoteUser.videoTrack?.getCurrentFrameData());
             }, 500);
-            setWindowBounds(1920, 1080);
             homeService.listenMouseAndKeyEvent(remoteCode, rtmService);
             setTitleVisible(false);
 
